@@ -22,3 +22,7 @@ Same as installation.
 Use just as if it is normal Linux platform-tools installation
 
 **NOTE: If you use /mnt/c/... path, use C:/... instead.**
+
+## Issues
+
+`make_f2fs` fails for some reason
