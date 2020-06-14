@@ -30,11 +30,8 @@ TMP_TOOLS=${TMP_DIR}/platform-tools
 INSTALL_DIR=/usr/lib/platform-tools
 
 function uninstall() {
-    echo -n "Do you want to uninstall platform-tools (y/N)? "
-    read unin
-    if test "${unin}" == "y"; then
-        rm -rv /usr/bin/adb /usr/bin/fastboot ${INSTALL_DIR}
-    fi
+    echo -n "Uninstalling..."
+    rm -rv /usr/bin/adb /usr/bin/fastboot ${INSTALL_DIR}
     exit 0
 }
 
