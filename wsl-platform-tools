@@ -30,7 +30,7 @@ TMP_TOOLS=${TMP_DIR}/platform-tools
 INSTALL_DIR=/usr/lib/platform-tools
 
 function uninstall() {
-    echo -n "Uninstalling..."
+    message "Uninstalling..."
     rm -rv /usr/bin/adb /usr/bin/fastboot ${INSTALL_DIR}
     exit 0
 }
