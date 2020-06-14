@@ -1,0 +1,71 @@
+#!/bin/bash
+#
+# Copyright (C) 2020 Arseniy Graur
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+set -e
+
+function message() {
+    echo ""
+    echo "${1}"
+    echo ""
+}
+
+# Variables
+PLATFORM_TOOLS="https://dl.google.com/android/repository/platform-tools-latest-windows.zip"
+TMP_DIR=tmp-platform-tools
+TMP_TOOLS=${TMP_DIR}/platform-tools
+INSTALL_DIR=/usr/lib/platform-tools
+
+function uninstall() {
+    echo -n "Do you want to uninstall platform-tools (y/N)? "
+    read unin
+    if test "${unin}" == "y"; then
+        rm -rv /usr/bin/adb /usr/bin/fastboot ${INSTALL_DIR}
+    fi
+    exit 0
+}
+
+# Root check
+if test ! "$(whoami)" == "root"; then message "Run as root!"; exit 1; fi
+# Installed check
+if test -e "${INSTALL_DIR}"; then message "platform-tools are already installed!"; uninstall; fi
+# wget check
+type wget
+
+message "Downloading ${PLATFORM_TOOLS}..."
+wget -q ${PLATFORM_TOOLS} -O ${TMP_DIR}.zip
+
+message "Extracting ${TMP_DIR}.zip..."
+unzip -qd ${TMP_DIR} ${TMP_DIR}.zip
+
+message "Creating ${INSTALL_DIR}"
+mkdir -v ${INSTALL_DIR}
+
+message "Installing extracted binaries to ${INSTALL_DIR}..."
+install -m 0755 ${TMP_TOOLS}/adb.exe ${INSTALL_DIR}/adb
+install -m 0755 ${TMP_TOOLS}/fastboot.exe ${INSTALL_DIR}/fastboot
+install -m 0755 ${TMP_TOOLS}/*.exe ${INSTALL_DIR}
+install ${TMP_TOOLS}/*.dll ${INSTALL_DIR}
+
+message "Linking adb and fastboot to /usr/bin..."
+ln -sv ${INSTALL_DIR}/adb /usr/bin/adb
+ln -sv ${INSTALL_DIR}/fastboot /usr/bin/fastboot
+
+message "Cleaning up..."
+rm -r ${TMP_DIR}
+rm -v ${TMP_DIR}.zip
+
+message "Done!"
